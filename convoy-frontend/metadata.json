@@ -1,0 +1,5 @@
+{
+  "name": "DefLogis: AI Convoy Command",
+  "description": "AI-Powered Intelligent Convoy Routing & Movement Management System. Features tactical dashboards, route optimization via Gemini AI, and real-time fleet monitoring.",
+  "requestFramePermissions": []
+}
