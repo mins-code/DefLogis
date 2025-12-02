@@ -1,4 +1,3 @@
-
 export enum ConvoyStatus {
   MOVING = 'MOVING',
   DELAYED = 'DELAYED',
@@ -23,9 +22,9 @@ export interface Convoy {
   priority: 'HIGH' | 'MEDIUM' | 'LOW';
   eta: string;
   distance: string;
-  analysis?: RouteAnalysis;
+  analysis?: RouteAnalysis; // Added optional field
   ipfsCid?: string; // Content Identifier for IPFS file
-  txHash?: string; // Transaction hash for blockchain log
+  txHash?: string; // Transaction hash for blockchain log
 }
 
 export interface Alert {

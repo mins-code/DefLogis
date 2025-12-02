@@ -73,6 +73,7 @@ class Convoy(BaseModel):
     distance: str
     ipfsCid: Optional[str] = None 
     txHash: Optional[str] = None
+    analysis: Optional[RouteAnalysis] = None
 
 class SecurityLog(BaseModel):
     id: str
@@ -373,6 +374,7 @@ async def deploy_convoy(deploy_data: DeployRequest):
         convoy_data.txHash = tx_hash
         
         # 4. Save Convoy (with new log data) to MongoDB
+        convoy_data.analysis = analysis_data # <--- ADD THIS LINE
         convoy_dict = convoy_data.model_dump(exclude_none=True)
         await db.convoys.insert_one(convoy_dict)
         
