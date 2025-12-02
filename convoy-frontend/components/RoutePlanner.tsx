@@ -69,7 +69,11 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy, convoys }) => 
       if (response.ok) {
         const savedConvoy = await response.json();
         onAddConvoy(savedConvoy);
-        handleClearView();
+
+        // Automatically select the new convoy to show logs immediately
+        setNewAnalysis(null);
+        setSelectedConvoy(savedConvoy);
+
         alert(`Mission Authorized. Convoy ${savedConvoy.id} Deployed.`);
       } else {
         const errorData = await response.json();
@@ -189,6 +193,8 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy, convoys }) => 
             end={selectedConvoy?.destination || end}
             onDeploy={selectedConvoy ? undefined : handleDeploy}
             loading={loading}
+            ipfsCid={selectedConvoy?.ipfsCid}
+            txHash={selectedConvoy?.txHash}
           />
         ) : (
           <div className="flex-1 bg-military-800 p-6 rounded-lg border border-military-700 flex items-center justify-center text-gray-400 font-mono">

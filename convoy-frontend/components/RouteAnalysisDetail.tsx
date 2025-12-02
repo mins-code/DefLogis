@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteAnalysis } from '../types';
-import { PlayCircle, ArrowRight, AlertTriangle } from 'lucide-react';
+import { PlayCircle, ArrowRight, AlertTriangle, Database, Hash, ExternalLink } from 'lucide-react';
 
 interface RouteAnalysisDetailProps {
   analysis: RouteAnalysis;
@@ -8,9 +8,20 @@ interface RouteAnalysisDetailProps {
   end: string;
   onDeploy?: () => void;
   loading: boolean;
+  // NEW: Explicitly accept these as optional props
+  ipfsCid?: string;
+  txHash?: string;
 }
 
-const RouteAnalysisDetail: React.FC<RouteAnalysisDetailProps> = ({ analysis, start, end, onDeploy, loading }) => {
+const RouteAnalysisDetail: React.FC<RouteAnalysisDetailProps> = ({ 
+  analysis, 
+  start, 
+  end, 
+  onDeploy, 
+  loading,
+  ipfsCid,    // Destructured new prop
+  txHash      // Destructured new prop
+}) => {
   return (
     <div className="flex-1 bg-military-800 p-6 rounded-lg border border-military-700 animate-in fade-in slide-in-from-bottom-4 flex flex-col">
       <div className="flex justify-between items-start mb-6 border-b border-military-700 pb-4">
@@ -99,21 +110,45 @@ const RouteAnalysisDetail: React.FC<RouteAnalysisDetailProps> = ({ analysis, sta
         </div>
       </div>
 
-      {/* Display IPFS CID and Transaction Hash if available */}
-      {(analysis.ipfsCid || analysis.txHash) && (
-        <div className="mt-6 bg-military-900 p-4 rounded border border-military-700">
-          {analysis.ipfsCid && (
-            <div className="mb-4">
-              <h4 className="text-gray-400 text-xs font-bold uppercase">IPFS CID</h4>
-              <p className="text-sm text-emerald-400 font-mono">{analysis.ipfsCid}</p>
-            </div>
-          )}
-          {analysis.txHash && (
-            <div>
-              <h4 className="text-gray-400 text-xs font-bold uppercase">Blockchain Tx Hash</h4>
-              <p className="text-sm text-emerald-400 font-mono">{analysis.txHash}</p>
-            </div>
-          )}
+      {/* BLOCKCHAIN & IPFS LOGS SECTION */}
+      {(ipfsCid || txHash) && (
+        <div className="mt-6 bg-military-900/80 p-5 rounded border border-emerald-500/30 relative overflow-hidden">
+          {/* Decorative background element */}
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+             <Database className="w-16 h-16 text-emerald-500" />
+          </div>
+
+          <h4 className="text-emerald-500 text-sm font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+            <Hash className="w-4 h-4" /> Immutable Ledger Records
+          </h4>
+          
+          <div className="space-y-4 relative z-10">
+            {ipfsCid && (
+              <div className="flex flex-col">
+                <span className="text-gray-500 text-[10px] uppercase font-bold mb-1">IPFS Content ID (CID)</span>
+                <code className="bg-black/50 p-2 rounded text-emerald-400 text-xs font-mono break-all border border-military-700 select-all">
+                  {ipfsCid}
+                </code>
+              </div>
+            )}
+            
+            {txHash && (
+              <div className="flex flex-col">
+                <span className="text-gray-500 text-[10px] uppercase font-bold mb-1">Blockchain Transaction Hash</span>
+                <code className="bg-black/50 p-2 rounded text-emerald-400 text-xs font-mono break-all border border-military-700 select-all">
+                  {txHash}
+                </code>
+                <a 
+                  href={`https://amoy.polygonscan.com/tx/${txHash}`} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="text-[10px] text-blue-400 hover:text-blue-300 mt-2 inline-flex items-center gap-1 uppercase font-bold tracking-wider"
+                >
+                  Verify on PolygonScan <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
