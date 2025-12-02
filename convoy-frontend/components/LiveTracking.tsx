@@ -33,7 +33,7 @@ const LiveTracking: React.FC<LiveTrackingProps> = ({ convoys }) => {
     const end = cleanLocation(convoy.destination);
     // Using simple embed format that works without specific key for demo, or falls back gracefully.
     // In a production environment with a specific restricted key, you would use the Embed API v1.
-    return `https://maps.google.com/maps?q=${encodeURIComponent(start)}+to+${encodeURIComponent(end)}&t=&z=10&ie=UTF8&iwloc=&output=embed`;
+    return `https://maps.google.com/maps?f=d&source=s_d&daddr=${encodeURIComponent(start)}+to+${encodeURIComponent(end)}&ie=UTF8&output=embed`;
   };
 
   return (
