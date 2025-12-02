@@ -2,7 +2,7 @@
 import { RouteAnalysis } from '../types';
 
 // IMPORTANT: This URL must match the address where your Python FastAPI server is running
-const API_BASE_URL = 'http://localhost:8000/api'; 
+const API_BASE_URL = 'https://deflogis.onrender.com/api'; 
 
 export const analyzeRouteWithAI = async (
   start: string,

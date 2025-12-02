@@ -29,7 +29,7 @@ ai = genai.Client(api_key=GEMINI_API_KEY)
 origins = [
     "http://localhost:3000", 
     "http://127.0.0.1:3000",
-    "https://def-logis.vercel.app/",
+    "https://def-logis.vercel.app",
 ]
 app.add_middleware(
     CORSMiddleware,
