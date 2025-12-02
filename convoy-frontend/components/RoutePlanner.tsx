@@ -35,6 +35,72 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy, convoys }) => 
     }
   };
 
+  // --- NEW FUNCTION: handleDeploy (Deployment Logic) ---
+  const handleDeploy = async () => {
+    if (!newAnalysis) return;
+
+    setLoading(true);
+    try {
+      // 1. Construct the Convoy object with generated/derived data
+      const convoyId = `CV-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      const convoyName = `Transport Unit ${convoyId.split('-')[2]}`;
+      
+      const newConvoy: Convoy = {
+          id: convoyId,
+          name: convoyName,
+          startLocation: start,
+          destination: end,
+          status: ConvoyStatus.MOVING, // Start as MOVING
+          progress: 0,
+          vehicleCount: vehicleCount,
+          priority: newAnalysis.riskLevel as 'HIGH' | 'MEDIUM' | 'LOW', 
+          eta: newAnalysis.estimatedDuration,
+          distance: '250 km', // Placeholder, using a default value
+          analysis: newAnalysis, // Include analysis to be sent to the backend
+      }
+
+      const payload = {
+        convoy: newConvoy,
+        analysis: newAnalysis,
+      };
+
+      const url = `${API_BASE_URL}/convoys/deploy`;
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+          const errorDetail = await response.json();
+          throw new Error(`Deployment failed: ${errorDetail.detail || response.statusText}`);
+      }
+
+      // The backend returns the deployed Convoy object (including IPFS/Tx data)
+      const deployedConvoy = await response.json();
+      
+      // 2. Add the new convoy to the list in App.tsx (via prop callback)
+      onAddConvoy(deployedConvoy as Convoy); 
+      
+      // 3. Clear the analysis view and form inputs
+      setStart('');
+      setEnd('');
+      setVehicleCount(5);
+      setNewAnalysis(null);
+      setSelectedConvoy(null);
+
+    } catch (error) {
+      console.error('Error during convoy deployment:', error);
+      alert(`Deployment Error: ${error instanceof Error ? error.message : "Check console for details."}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+  // -----------------------------------------------------
+
   const handleClearView = () => {
     setNewAnalysis(null);
     setSelectedConvoy(null);
@@ -42,7 +108,7 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy, convoys }) => 
 
   return (
     <div className="h-full flex flex-col lg:flex-row gap-6">
-      {/* Left Column: Convoy List */}
+      {/* Left Column: Convoy List (No changes here, the new convoy will appear after deployment) */}
       <div className="lg:w-1/3 flex flex-col gap-4">
         <div className="bg-military-800 p-4 rounded border border-military-700">
           <h2 className="text-white font-bold text-sm uppercase font-mono mb-4">Deployed Convoys</h2>
@@ -76,7 +142,7 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy, convoys }) => 
 
       {/* Right Column: Analysis Form and Details */}
       <div className="lg:w-2/3 flex flex-col gap-4">
-        {/* Analysis Request Form */}
+        {/* Analysis Request Form (No changes needed) */}
         <div className="bg-military-800 p-6 rounded-lg border border-military-700 shadow-lg">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-white flex items-center gap-2 font-mono">
@@ -138,7 +204,7 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy, convoys }) => 
             analysis={selectedConvoy?.analysis || newAnalysis!}
             start={selectedConvoy?.startLocation || start}
             end={selectedConvoy?.destination || end}
-            onDeploy={selectedConvoy ? undefined : handleAnalyze}
+            onDeploy={selectedConvoy ? undefined : handleDeploy} // *** FIXED: Now calls handleDeploy ***
             loading={loading}
           />
         ) : (
