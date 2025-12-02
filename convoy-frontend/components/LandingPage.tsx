@@ -54,7 +54,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onEnter }) => {
 
           <button 
             onClick={onEnter}
-            className="group w-full bg-transparent hover:bg-military-red border border-military-red text-military-red hover:text-white transition-all duration-300 py-4 px-8 rounded font-bold tracking-widest flex items-center justify-center gap-2"
+            className="cursor-target group w-full bg-transparent hover:bg-military-red border border-military-red text-military-red hover:text-white transition-all duration-300 py-4 px-8 rounded font-bold tracking-widest flex items-center justify-center gap-2"
           >
             INITIALIZE SEQUENCE
             <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
