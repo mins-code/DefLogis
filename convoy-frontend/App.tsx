@@ -14,7 +14,7 @@ import { MOCK_CONVOYS } from './constants';
 type ViewState = 'LANDING' | 'LOGIN' | 'APP';
 type TabState = 'dashboard' | 'routes' | 'tracking' | 'logs' | 'config';
 
-const API_BASE_URL = 'http://localhost:8000/api'; 
+const API_BASE_URL = 'https://deflogis.onrender.com/api'; 
 const MOCK_ALERTS: Alert[] = [{ id: 'SYS-000', severity: 'INFO', message: 'Backend connection established.', timestamp: 'NOW' }];
 
 const App: React.FC = () => {
