@@ -14,7 +14,8 @@
     "@google/genai": "^1.30.0",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.555.0",
-    "recharts": "^3.5.0"
+    "recharts": "^3.5.0",
+    "gsap": "^3.12.5" 
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

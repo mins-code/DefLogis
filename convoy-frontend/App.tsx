@@ -6,6 +6,7 @@ import LoginPage from './components/LoginPage';
 import LiveTracking from './components/LiveTracking';
 import SecurityLogs from './components/SecurityLogs';
 import SystemConfig from './components/SystemConfig';
+import TargetCursor from './components/TargetCursor'; // <--- Import the cursor
 import { LayoutDashboard, Map, Shield, Settings, Menu, X, Globe, LogOut } from 'lucide-react';
 import { User, Convoy, Alert } from './types';
 import { MOCK_CONVOYS } from './constants';
@@ -69,16 +70,30 @@ const App: React.FC = () => {
     setActiveTab('tracking');
   };
 
+  // NOTE: TargetCursor is rendered at the top level so it persists across views
+  const renderCursor = () => <TargetCursor targetSelector=".cursor-target" />;
+
   if (view === 'LANDING') {
-    return <LandingPage onEnter={() => setView('LOGIN')} />;
+    return (
+      <>
+        {renderCursor()}
+        <LandingPage onEnter={() => setView('LOGIN')} />
+      </>
+    );
   }
 
   if (view === 'LOGIN') {
-    return <LoginPage onLogin={handleLogin} />;
+    return (
+      <>
+        {renderCursor()}
+        <LoginPage onLogin={handleLogin} />
+      </>
+    );
   }
 
   return (
     <div className="flex h-screen bg-black text-white font-sans overflow-hidden">
+      {renderCursor()}
       <aside className={`
         fixed inset-y-0 left-0 z-50 w-64 bg-military-900 border-r border-military-700 transform transition-transform duration-300 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -96,9 +111,10 @@ const App: React.FC = () => {
           </button>
         </div>
         <nav className="p-4 space-y-2">
+          {/* Added 'cursor-target' class to all nav buttons */}
           <button
             onClick={() => { setActiveTab('dashboard'); setSidebarOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-bold tracking-wide transition-all ${
+            className={`cursor-target w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-bold tracking-wide transition-all ${
               activeTab === 'dashboard'
                 ? 'bg-military-red text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]'
                 : 'text-gray-400 hover:bg-military-800 hover:text-white'
@@ -109,7 +125,7 @@ const App: React.FC = () => {
           </button>
           <button
             onClick={() => { setActiveTab('routes'); setSidebarOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-bold tracking-wide transition-all ${
+            className={`cursor-target w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-bold tracking-wide transition-all ${
               activeTab === 'routes'
                 ? 'bg-military-red text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]'
                 : 'text-gray-400 hover:bg-military-800 hover:text-white'
@@ -120,7 +136,7 @@ const App: React.FC = () => {
           </button>
           <button
             onClick={() => { setActiveTab('tracking'); setSidebarOpen(false); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-bold tracking-wide transition-all ${
+            className={`cursor-target w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-bold tracking-wide transition-all ${
               activeTab === 'tracking'
                 ? 'bg-military-red text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]'
                 : 'text-gray-400 hover:bg-military-800 hover:text-white'
@@ -134,7 +150,7 @@ const App: React.FC = () => {
             {user?.role === 'COMMANDER' && (
               <button
                 onClick={() => { setActiveTab('logs'); setSidebarOpen(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-bold tracking-wide transition-all ${
+                className={`cursor-target w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-bold tracking-wide transition-all ${
                   activeTab === 'logs'
                     ? 'bg-military-red text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]'
                     : 'text-gray-400 hover:bg-military-800 hover:text-white'
@@ -146,7 +162,7 @@ const App: React.FC = () => {
             )}
             <button
               onClick={() => { setActiveTab('config'); setSidebarOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-bold tracking-wide transition-all ${
+              className={`cursor-target w-full flex items-center gap-3 px-4 py-3 rounded text-sm font-bold tracking-wide transition-all ${
                 activeTab === 'config'
                   ? 'bg-military-red text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]'
                   : 'text-gray-400 hover:bg-military-800 hover:text-white'
@@ -169,7 +185,7 @@ const App: React.FC = () => {
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-2 text-xs text-red-500 hover:bg-red-950/30 rounded border border-transparent hover:border-red-900 transition-colors"
+            className="cursor-target w-full flex items-center justify-center gap-2 py-2 text-xs text-red-500 hover:bg-red-950/30 rounded border border-transparent hover:border-red-900 transition-colors"
           >
             <LogOut className="w-3 h-3" /> LOGOUT
           </button>
@@ -178,7 +194,7 @@ const App: React.FC = () => {
       <main className="flex-1 flex flex-col h-full relative overflow-hidden bg-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-military-800 via-black to-black">
         <header className="md:hidden p-4 border-b border-military-800 flex items-center justify-between bg-military-900 shrink-0">
           <h1 className="text-lg font-black italic text-white uppercase">AI Convoy <span className="text-military-red">Chain</span></h1>
-          <button onClick={() => setSidebarOpen(true)} className="text-white">
+          <button onClick={() => setSidebarOpen(true)} className="text-white cursor-target">
             <Menu className="w-6 h-6" />
           </button>
         </header>
