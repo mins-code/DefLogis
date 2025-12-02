@@ -138,7 +138,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full bg-white text-black font-bold py-4 rounded hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 font-mono uppercase tracking-widest mt-4"
+            className="cursor-target w-full bg-white text-black font-bold py-4 rounded hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 font-mono uppercase tracking-widest mt-4"
           >
             {loading ? (
               <>
