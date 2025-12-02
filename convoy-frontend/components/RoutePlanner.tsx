@@ -10,6 +10,12 @@ interface RoutePlannerProps {
   onAddConvoy: (convoy: Convoy) => void;
 }
 
+// Define the payload structure for the deploy request
+interface DeployPayload {
+  convoy: Convoy;
+  analysis: RouteAnalysis; // The full analysis data that needs to be logged
+}
+
 const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy }) => {
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
@@ -28,12 +34,15 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy }) => {
     setLoading(false);
   };
 
-  const handleDeploy = async () => { // Made async
+  const handleDeploy = async () => { 
     if (!analysis) return;
 
+    // 1. Prepare Convoy data (Corrected to use backticks)
     const newConvoy: Convoy = {
-      id: analysis.routeId || `CV-${Math.floor(Math.random()*1000)}`,
-      name: `UNIT ${start.substring(0,3).toUpperCase()}-${end.substring(0,3).toUpperCase()}`,
+      // FIX: Used backticks (`) for template literals
+      id: analysis.routeId || CV-${Math.floor(Math.random()*1000)},
+      // FIX: Used backticks (`) for template literals
+      name: UNIT ${start.substring(0,3).toUpperCase()}-${end.substring(0,3).toUpperCase()},
       startLocation: start,
       destination: end,
       status: ConvoyStatus.MOVING,
@@ -42,26 +51,43 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy }) => {
       priority: analysis.riskLevel === 'HIGH' ? 'HIGH' : 'MEDIUM',
       eta: analysis.estimatedDuration,
       distance: 'Calculating...' 
+      // ipfsCid and txHash fields will be received from the backend response
     };
+    
+    // 2. Prepare the full payload for the backend
+    const payload: DeployPayload = {
+        convoy: newConvoy,
+        analysis: analysis // Full route analysis data for IPFS/Blockchain logging
+    }
 
-    // --- NEW BACKEND CALL to Deploy ---
+    // --- UPDATED BACKEND CALL to Deploy ---
     try {
-        setLoading(true); // Optional: Re-use loading state for deployment
-        const response = await fetch(`${API_BASE_URL}/convoys/deploy`, {
+        setLoading(true);
+        
+        // Sending the combined payload now
+        const response = await fetch(${API_BASE_URL}/convoys/deploy, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newConvoy)
+            body: JSON.stringify(payload) // Send the combined payload
         });
 
         if (!response.ok) {
-            throw new Error('Deployment failed on server.');
+            // Read error details from backend response
+            const errorDetail = await response.json();
+            throw new Error(Deployment failed: ${errorDetail.detail || response.statusText});
         }
         
+        // 3. Update local convoy with the response from backend (which includes ipfsCid, txHash)
+        const deployedConvoyWithLog = await response.json() as Convoy; 
+        
         // Update local state (in App.tsx) after successful deployment
-        onAddConvoy(newConvoy); 
+        onAddConvoy(deployedConvoyWithLog); 
+        
+        // Clear analysis upon successful deployment
+        setAnalysis(null);
     } catch (error) {
         console.error("Failed to deploy convoy:", error);
-        alert("DEPLOYMENT FAILED. Check backend server and connection.");
+        alert(DEPLOYMENT FAILED. Check backend server and log integrity. Error: ${error});
     } finally {
         setLoading(false);
     }

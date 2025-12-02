@@ -23,6 +23,9 @@ export interface Convoy {
   priority: 'HIGH' | 'MEDIUM' | 'LOW';
   eta: string;
   distance: string;
+  analysis?: RouteAnalysis;
+  ipfsCid?: string; // Content Identifier for IPFS file
+  txHash?: string; // Transaction hash for blockchain log
 }
 
 export interface Alert {
