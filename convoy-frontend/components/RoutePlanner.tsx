@@ -40,9 +40,9 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy }) => {
     // 1. Prepare Convoy data (Corrected to use backticks)
     const newConvoy: Convoy = {
       // FIX: Used backticks (`) for template literals
-      id: analysis.routeId || CV-${Math.floor(Math.random()*1000)},
+      id: analysis.routeId || `CV-${Math.floor(Math.random()*1000)}`,
       // FIX: Used backticks (`) for template literals
-      name: UNIT ${start.substring(0,3).toUpperCase()}-${end.substring(0,3).toUpperCase()},
+      name: `UNIT ${start.substring(0,3).toUpperCase()}-${end.substring(0,3).toUpperCase()}`,
       startLocation: start,
       destination: end,
       status: ConvoyStatus.MOVING,
@@ -65,7 +65,7 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy }) => {
         setLoading(true);
         
         // Sending the combined payload now
-        const response = await fetch(${API_BASE_URL}/convoys/deploy, {
+        const response = await fetch(`${API_BASE_URL}/convoys/deploy`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload) // Send the combined payload
@@ -74,7 +74,7 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy }) => {
         if (!response.ok) {
             // Read error details from backend response
             const errorDetail = await response.json();
-            throw new Error(Deployment failed: ${errorDetail.detail || response.statusText});
+            throw new Error(`Deployment failed: ${errorDetail.detail || response.statusText}`);
         }
         
         // 3. Update local convoy with the response from backend (which includes ipfsCid, txHash)
@@ -87,7 +87,7 @@ const RoutePlanner: React.FC<RoutePlannerProps> = ({ onAddConvoy }) => {
         setAnalysis(null);
     } catch (error) {
         console.error("Failed to deploy convoy:", error);
-        alert(DEPLOYMENT FAILED. Check backend server and log integrity. Error: ${error});
+        alert(`DEPLOYMENT FAILED. Check backend server and log integrity. Error: ${error}`);
     } finally {
         setLoading(false);
     }
